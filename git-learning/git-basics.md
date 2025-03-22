@@ -7,4 +7,5 @@ Git Basics
   - git commit
   - git remote
   - git push
+  - git pull
   - 
