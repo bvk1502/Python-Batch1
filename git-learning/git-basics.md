@@ -8,4 +8,4 @@ Git Basics
   - git remote
   - git push remote branch_name
   - git pull remote branch_name
-  - 
+  - git merge
