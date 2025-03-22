@@ -9,3 +9,5 @@ Git Basics
   - git push remote branch_name
   - git pull remote branch_name
   - git merge
+  - creating new branch
+    - git checkout -b new_branch_name #no space for the branch name
