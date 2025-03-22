@@ -6,6 +6,6 @@ Git Basics
   - git add
   - git commit
   - git remote
-  - git push
-  - git pull
+  - git push remote branch_name
+  - git pull remote branch_name
   - 
