@@ -18,3 +18,7 @@ Git Basics
       - fix the conflicts
       - git commit -am "message"
     - git push origin main
+  - 2 - how to Merge from github
+    - Do changes in your current branch (merge_branch)
+    - git commit your current/working branch
+    - git push the changes to current/working branch
