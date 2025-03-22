@@ -22,3 +22,5 @@ Git Basics
     - Do changes in your current branch (merge_branch)
     - git commit your current/working branch
     - git push the changes to current/working branch
+  - 3 - How to Merge using Visual Studio Code
+    - No need to enter any commands in terminal
