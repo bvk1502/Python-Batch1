@@ -11,3 +11,10 @@ Git Basics
   - git merge
   - creating new branch
     - git checkout -b new_branch_name #no space for the branch name
+  - 1 - How to Merge from one branch(merge_branch branch) to another (main branch) - Using Commands
+    - git checkout main
+    - git merge merge_branch
+      - We may face conflicts(for same file / same line some other person worked on)
+      - fix the conflicts
+      - git commit -am "message"
+    - git push origin main
