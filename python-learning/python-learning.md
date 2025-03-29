@@ -1,0 +1,22 @@
+- How to create Virtual Environment
+  - install pip 
+  - install Python (2.*, 3.*)
+    - Conda - install virtual environment
+    - virtualenv 
+    - We can use Visual Studio Code to create Virtual Environment
+  - Why we need to create Virtual Environment
+    - Python can be run globally in a system
+    - Python can be run in virtual environment also
+  
+- How to Use or Activate Virtual Environment
+  - .venv
+    - source .venv\bin\activate.sh
+    - source .venv/bin/activate
+
+- How to run Python Code / File
+  - Command
+    - python filename.py
+  - Using Visual Studio code
+    - Click on Play button 
+    - Click on Run menu -> Start Debugging / Run without Debugging
+- Working on jupyter files ipynb extension

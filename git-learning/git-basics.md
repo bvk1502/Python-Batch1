@@ -24,3 +24,5 @@ Git Basics
     - git push the changes to current/working branch
   - 3 - How to Merge using Visual Studio Code
     - No need to enter any commands in terminal
+  - 4 - Git Tags
+    - 
