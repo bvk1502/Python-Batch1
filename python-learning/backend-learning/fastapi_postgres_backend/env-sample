@@ -1,0 +1,4 @@
+DATABASE_URL=postgresql+asyncpg://postgres:pass@localhost:5432/user-rbac
+SECRET_KEY=supersecretkey
+FIRST_SUPERUSER_EMAIL=admin@example.com
+FIRST_SUPERUSER_PASSWORD=admin123
