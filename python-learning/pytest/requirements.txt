@@ -1,0 +1,42 @@
+# Core testing framework
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-mock>=3.10.0
+pytest-xdist>=3.0.0
+pytest-html>=3.1.0
+pytest-json-report>=1.5.0
+
+# Mocking and patching
+pytest-mock>=3.10.0
+unittest-mock>=1.0.1
+
+# Database testing
+pytest-postgresql>=4.1.0
+pytest-sqlalchemy>=0.5.0
+sqlalchemy>=1.4.0
+psycopg2-binary>=2.9.0
+
+# API testing
+pytest-asyncio>=0.21.0
+httpx>=0.24.0
+fastapi>=0.100.0
+uvicorn>=0.22.0
+
+# Performance testing
+pytest-benchmark>=4.0.0
+pytest-profiling>=1.7.0
+memory-profiler>=0.60.0
+
+# Additional utilities
+factory-boy>=3.2.0
+faker>=18.0.0
+pytest-randomly>=3.15.0
+pytest-repeat>=0.9.1
+pytest-timeout>=2.1.0
+pytest-freezegun>=0.2.2
+
+# Development tools
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+pre-commit>=3.0.0 

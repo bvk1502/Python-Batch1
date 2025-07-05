@@ -1,113 +1,96 @@
-.PHONY: install install-dev clean test lint format check run run-dev migrate help
+.PHONY: test test-tdd test-unit test-integration test-cov clean install-dev sync
 
-# Default target
-help:
-	@echo "Available commands:"
-	@echo "  install     - Install production dependencies"
-	@echo "  install-dev - Install development dependencies"
-	@echo "  clean       - Clean up cache and temporary files"
-	@echo "  test        - Run tests"
-	@echo "  lint        - Run linting checks"
-	@echo "  format      - Format code with black and isort"
-	@echo "  check       - Run type checking with mypy"
-	@echo "  run         - Run the application in production mode"
-	@echo "  run-dev     - Run the application in development mode"
-	@echo "  migrate     - Run database migrations"
-
-# Install production dependencies
-install:
-	uv sync
-
-# Install development dependencies
+# Install dependencies using uv
 install-dev:
 	uv sync --dev
 
-# Clean up
-clean:
-	uv cache clean
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	find . -type f -name "*.pyo" -delete
-	find . -type f -name "*.pyd" -delete
-	find . -type f -name ".coverage" -delete
-	find . -type d -name "*.egg-info" -exec rm -rf {} +
-	find . -type d -name ".pytest_cache" -exec rm -rf {} +
-	find . -type d -name ".mypy_cache" -exec rm -rf {} +
+# Sync dependencies
+sync:
+	uv sync
 
-# Run tests
+# Run all tests
 test:
-	uv run pytest
+	uv run pytest test/ -v --asyncio-mode=auto
 
-# Run tests with coverage
+# Run TDD cycle
+test-tdd:
+	uv run python test/run_all_tests.py --tdd
+
+# Run unit tests only
+test-unit:
+	uv run pytest test/ -v -m "not integration" --asyncio-mode=auto
+
+# Run integration tests only
+test-integration:
+	uv run pytest test/ -v -m "integration" --asyncio-mode=auto
+
+# Run with coverage
 test-cov:
-	uv run pytest --cov=app --cov-report=html --cov-report=term
+	uv run pytest test/ -v --cov=app --cov-report=html --asyncio-mode=auto
+
+# Run specific test class
+test-class:
+	uv run python test/run_all_tests.py --class $(CLASS)
+
+# Run tests in watch mode
+test-watch:
+	uv run ptw test/ -- -v --asyncio-mode=auto
+
+# Run tests with specific markers
+test-markers:
+	uv run pytest test/ -v -m "$(MARKERS)" --asyncio-mode=auto
 
 # Run linting
 lint:
-	uv run flake8 app tests
-	uv run black --check app tests
-	uv run isort --check-only app tests
+	uv run black app/ test/
+	uv run isort app/ test/
+	uv run flake8 app/ test/
 
-# Format code
-format:
-	uv run black app tests
-	uv run isort app tests
+# Run type checking
+type-check:
+	uv run mypy app/
 
-# Type checking
-check:
-	uv run mypy app
+# Run all checks (lint + type-check + test)
+check: lint type-check test
 
-# Run all checks
-check-all: lint check test
+# Clean up
+clean:
+	rm -rf htmlcov/
+	rm -rf .pytest_cache/
+	rm -rf __pycache__/
+	find . -type d -name __pycache__ -delete
+	find . -type f -name "*.pyc" -delete
+	rm -rf .mypy_cache/
+	rm -rf .coverage
 
-# Run the application in production mode
-run:
-	uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
-
-# Run the application in development mode
-run-dev:
-	uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 --log-level debug
-
-# Run database migrations
-migrate:
-	uv run python migrate.py
-
-# Create new migration
-migrate-create:
-	uv run alembic revision --autogenerate -m "$(message)"
-
-# Upgrade database
-migrate-upgrade:
-	uv run alembic upgrade head
-
-# Downgrade database
-migrate-downgrade:
-	uv run alembic downgrade -1
-
-# Show migration history
-migrate-history:
-	uv run alembic history
-
-# Show current migration
-migrate-current:
-	uv run alembic current
-
-# Install pre-commit hooks
-install-hooks:
-	uv run pre-commit install
+# Install project in editable mode
+install:
+	uv pip install -e .
 
 # Update dependencies
 update:
 	uv lock --upgrade
 
-# Show outdated packages
-outdated:
-	uv lock --check
+# Show dependency tree
+deps:
+	uv tree
 
-# Export requirements
-export-requirements:
-	uv export --format requirements-txt > requirements.txt
+# Run the application
+run:
+	uv run uvicorn app.main:app --reload
 
-# Export requirements with dev dependencies
-export-requirements-dev:
-	uv export --format requirements-txt --dev > requirements-dev.txt 
+# Run the application in production mode
+run-prod:
+	uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# Database migrations
+migrate:
+	uv run alembic upgrade head
+
+# Create new migration
+migrate-create:
+	uv run alembic revision --autogenerate -m "$(MESSAGE)"
+
+# Reset database (for development)
+reset-db:
+	uv run python migrate.py 

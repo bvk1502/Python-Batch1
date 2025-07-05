@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d testdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://test:test@db:5432/testdb
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: test
+      SECRET_KEY: test-secret-key
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx Reverse Proxy (optional)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app
+    profiles:
+      - full-stack
+
+  # Test Runner
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      DATABASE_URL: postgresql://test:test@db:5432/testdb
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: test
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    volumes:
+      - ./tests:/app/tests
+      - ./test-results:/app/test-results
+    command: ["pytest", "-v", "--junitxml=/app/test-results/results.xml", "--html=/app/test-results/report.html"]
+    profiles:
+      - testing
+
+volumes:
+  postgres_data:
+  redis_data: 
